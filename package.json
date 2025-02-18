@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "clean": "cd android && ./gradlew clean",
+    "buildApk": "cd android &&  ./gradlew app:assembleRelease"
   },
   "dependencies": {
     "@react-navigation/elements": "^2.2.5",

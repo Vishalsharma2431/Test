@@ -8,35 +8,76 @@ type DashboardProps = {
   navigation: NativeStackNavigationProp<any, any>;
 };
 
-/**
- * Dashboard component displaying stock chart and navigational button.
- * @param props - Props object with navigation of type NativeStackNavigationProp.
- * @returns JSX.Element
- */
 const Dashboard: React.FC<DashboardProps> = ({navigation}) => {
   const chartHtml = `
-    <html>
+    <html>  
     <head>
       <script src="https://code.highcharts.com/stock/highstock.js"></script>
-      <script src="https://code.highcharts.com/modules/exporting.js"></script>
+      <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+      <script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+      <script src="https://code.highcharts.com/stock/indicators/bollinger-bands.js"></script>
+      <script src="https://code.highcharts.com/stock/indicators/price-channel.js"></script>
     </head>
     <body>
       <div id="container" style="width:100%; height:70vh;"></div>
       <script>
         document.addEventListener("DOMContentLoaded", function () {
-          Highcharts.stockChart('container', {
-           chart: {
-            zoomType: 'y', 
-          },
-            rangeSelector: { selected: 1 },
-            title: { text: 'Stock Price' },
-            series: [{
-              type: 'candlestick',
-              name: 'Stock Data',
-              data: ${JSON.stringify(chartData.data)},
-              tooltip: { valueDecimals: 2 }
-            }]
-          });
+         Highcharts.stockChart('container', {
+        chart: {
+            height: 600
+        },
+        title: {
+            text: 'AAPL Historical'
+        },
+        subtitle: {
+            text: 'All indicators'
+        },
+        accessibility: {
+            series: {
+                descriptionFormat: '{seriesDescription}.'
+            },
+            description: 'Use the dropdown menus above to display different ' +
+                'indicator series on the chart.',
+            screenReaderSection: {
+                beforeChartFormat: '<{headingTagName}>' +
+                    '{chartTitle}</{headingTagName}><div>' +
+                    '{typeDescription}</div><div>{chartSubtitle}</div><div>' +
+                    '{chartLongdesc}</div>'
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        rangeSelector: {
+            selected: 2
+        },
+        yAxis: [{
+            height: '60%'
+        }, {
+            top: '60%',
+            height: '20%'
+        }, {
+            top: '80%',
+            height: '20%'
+        }],
+        plotOptions: {
+            series: {
+                showInLegend: true,
+                accessibility: {
+                    exposeAsGroupOnly: true
+                }
+            }
+        },
+        series: [{
+            type: 'candlestick',
+            id: 'aapl',
+            name: 'AAPL',
+            data: ${JSON.stringify(chartData.data)}
+        }, {
+            type: 'pc',
+            linkedTo: 'aapl'
+        }]
+    });
         });
       </script>
     </body>

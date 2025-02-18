@@ -7,9 +7,12 @@ import {
   StyleSheet,
   FlatList,
   Text,
+  Dimensions,
   ScrollView,
 } from 'react-native';
 import {WebView} from 'react-native-webview';
+
+const {width, height} = Dimensions.get('window');
 
 const Chat = () => {
   const [inputText, setInputText] = useState('');
@@ -21,11 +24,23 @@ const Chat = () => {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Welcome</title>
+          <title>Response</title>
         </head>
         <body>
-          <h1>Hello from WebView</h1>
-          <p>This is the initial HTML content rendered in WebView.</p>
+          <h1>Server Response</h1>
+          <p>You sent: ${inputText}</p>
+
+          <!-- Video element -->
+          <video width="100%" controls>
+            <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+
+          <!-- Audio element -->
+          <audio controls>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+          </audio>
         </body>
       </html>
     `,
@@ -35,13 +50,11 @@ const Chat = () => {
   const sendData = () => {
     if (inputText.trim() === '') return;
 
-    // Add the user's message
     setMessages(prevMessages => [
       ...prevMessages,
       {id: `${Math.random()}`, type: 'text', content: inputText},
     ]);
 
-    // Simulate a response from the server (HTML content)
     const responseHtml = `
       <!DOCTYPE html>
       <html>
@@ -51,6 +64,18 @@ const Chat = () => {
         <body>
           <h1>Server Response</h1>
           <p>You sent: ${inputText}</p>
+
+          <!-- Video element -->
+          <video width="100%" controls>
+            <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+
+          <!-- Audio element -->
+          <audio controls>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+          </audio>
         </body>
       </html>
     `;
@@ -60,21 +85,19 @@ const Chat = () => {
       {id: `${Math.random()}`, type: 'html', content: responseHtml},
     ]);
 
-    setInputText(''); // Clear the input field
+    setInputText('');
   };
 
   const renderItem = ({item}) => {
     if (item.type === 'text') {
-      // User's text message (aligned to right)
       return (
         <View style={[styles.messageContainer, styles.sentMessage]}>
           <Text style={styles.textMessage}>{item.content}</Text>
         </View>
       );
     } else if (item.type === 'html') {
-      // HTML message (aligned to left)
       return (
-        <View>
+        <View style={styles.webviewContainer}>
           <WebView
             style={styles.webview}
             originWhitelist={['*']}
@@ -86,7 +109,7 @@ const Chat = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={messages}
         keyExtractor={item => item.id}
@@ -102,13 +125,18 @@ const Chat = () => {
         />
         <Button title="Send" onPress={sendData} />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
-  chatContainer: {padding: 10, paddingBottom: 100},
+  container: {
+    flex: 1,
+  },
+  chatContainer: {
+    padding: 10,
+    paddingBottom: 100,
+  },
   messageContainer: {
     marginVertical: 5,
     padding: 10,
@@ -123,8 +151,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     alignSelf: 'flex-start',
   },
-  textMessage: {fontSize: 16, color: '#000'},
-  webview: {height: 150, width: 300},
+  textMessage: {
+    fontSize: 16,
+    color: '#000',
+  },
+  webviewContainer: {
+    width: '100%',
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  webview: {
+    height: height * 0.5,
+    width: width * 0.9,
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
